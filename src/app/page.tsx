@@ -7,10 +7,12 @@ export default function SpawnerDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   
   const [selectedPlayer, setSelectedPlayer] = useState("@a");
-  const [activeCategory, setActiveCategory] = useState("Weapons");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState(CATEGORIES[0]);
   
-  const [selectedItem, setSelectedItem] = useState(ITEM_DB[0]);
+  // Update item selection when category changes
+  const availableItems = ITEM_DB.filter(i => i.cat === activeCategory);
+  const [selectedItem, setSelectedItem] = useState(availableItems[0] || ITEM_DB[0]);
+  
   const [amount, setAmount] = useState(1);
   
   const [customEnchants, setCustomEnchants] = useState<{id: string, lvl: number}[]>([]);
@@ -26,6 +28,15 @@ export default function SpawnerDashboard() {
     const int = setInterval(fetchPlayers, 15000);
     return () => clearInterval(int);
   }, []);
+
+  // Update selected item when category changes
+  useEffect(() => {
+    const items = ITEM_DB.filter(i => i.cat === activeCategory);
+    if (items.length > 0) {
+      setSelectedItem(items[0]);
+    }
+    setCustomEnchants([]); // reset enchants on cat change
+  }, [activeCategory]);
 
   const fetchPlayers = async () => {
     setRefreshing(true);
@@ -89,7 +100,7 @@ export default function SpawnerDashboard() {
                         serverResponse.toLowerCase().includes("syntax");
 
       if (data.success && !isMcError) {
-        showNotif(`Sukses: ${serverResponse || 'Barang terkirim!'}`, false);
+        showNotif(`Sukses: ${serverResponse || 'Berhasil dieksekusi!'}`, false);
       } else {
         showNotif(`Gagal: ${serverResponse || data.message}`, true);
       }
@@ -109,242 +120,156 @@ export default function SpawnerDashboard() {
     setCustomEnchants(customEnchants.filter(e => e.id !== id));
   };
 
-  const filteredItems = ITEM_DB.filter(i => 
-    i.cat === activeCategory && 
-    i.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-6 selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center selection:bg-indigo-500/30">
       
-      <div className="max-w-7xl mx-auto flex flex-col gap-6">
+      <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
         
-        {/* TOP BAR */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100 tracking-tight">Vercel Spawner</h1>
-            <p className="text-slate-500 text-sm">Dashboard RCON Super Lengkap.</p>
-          </div>
-          
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-2 flex items-center gap-2 shadow-sm">
-            <span className="text-xs font-semibold text-slate-500 uppercase ml-2 mr-2">Player Target:</span>
-            <button 
-              onClick={() => setSelectedPlayer("@a")}
-              className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${selectedPlayer === "@a" ? "bg-indigo-600 text-white" : "hover:bg-slate-800 text-slate-400"}`}
-            >
-              @a (Semua)
-            </button>
-            <div className="w-px h-5 bg-slate-800 mx-1"></div>
-            {players.length === 0 ? (
-              <span className="text-xs text-slate-500 italic px-2">Kosong</span>
-            ) : (
-              players.map(p => (
-                <button 
-                  key={p} 
-                  onClick={() => setSelectedPlayer(p)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${selectedPlayer === p ? "bg-emerald-600 text-white" : "hover:bg-slate-800 text-slate-400"}`}
-                >
-                  <img src={`https://minotar.net/helm/${p}/16.png`} alt={p} className="w-4 h-4 rounded-sm" />
-                  {p}
-                </button>
-              ))
-            )}
-            <button onClick={fetchPlayers} className={`p-1 text-slate-500 hover:text-slate-300 ml-1 ${refreshing ? 'animate-spin' : ''}`}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            </button>
-          </div>
+        {/* Header */}
+        <div className="bg-indigo-600 p-6 text-white text-center">
+          <h1 className="text-2xl font-bold tracking-tight">RCON Spawner</h1>
+          <p className="text-indigo-200 text-sm mt-1">Kirim item instan ke server Anda.</p>
         </div>
 
-        {/* MAIN LAYOUT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Form Body */}
+        <div className="p-6 flex flex-col gap-5">
           
-          {/* LEFT PANEL: CATEGORIES & ITEMS */}
-          <div className="lg:col-span-8 flex flex-col h-[750px] bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-            
-            {/* Categories */}
-            <div className="flex overflow-x-auto border-b border-slate-800 bg-slate-950 p-2 hide-scrollbar">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => { setActiveCategory(cat); setCustomEnchants([]); }}
-                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors mx-1 ${
-                    activeCategory === cat 
-                    ? "bg-slate-800 border border-slate-700 text-slate-100 shadow-sm" 
-                    : "text-slate-500 hover:text-slate-300 hover:bg-slate-800/50"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-5 flex-1 flex flex-col overflow-hidden">
-              <input 
-                type="text" 
-                placeholder="Cari pedang, kayu, diamond..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 px-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all mb-4"
-                disabled={activeCategory === "Enchanted Books" || activeCategory === "XP & Levels"}
-              />
-
-              {activeCategory === "Enchanted Books" ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-slate-500 bg-slate-950/50 rounded-xl border border-dashed border-slate-800">
-                  <div className="text-6xl mb-4 grayscale opacity-40">📖</div>
-                  <h3 className="text-lg font-bold text-slate-300 mb-1">Custom Enchanted Book</h3>
-                  <p className="text-sm text-slate-500">Rakit buku sihir Anda di panel sebelah kanan.</p>
-                </div>
-              ) : activeCategory === "XP & Levels" ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-slate-500 bg-slate-950/50 rounded-xl border border-dashed border-slate-800">
-                  <div className="text-6xl mb-4 grayscale opacity-40">✨</div>
-                  <h3 className="text-lg font-bold text-slate-300 mb-1">Pemberian XP</h3>
-                  <p className="text-sm text-slate-500">Tentukan jumlah level atau poin di panel sebelah kanan.</p>
-                </div>
-              ) : (
-                <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pr-2 custom-scrollbar">
-                  {filteredItems.map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => setSelectedItem(item)}
-                      className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${
-                        selectedItem.id === item.id 
-                        ? "bg-indigo-600/20 border-indigo-500/50 text-indigo-300 ring-1 ring-indigo-500/50" 
-                        : "bg-slate-800/50 border-slate-800 hover:border-slate-700 text-slate-400 hover:bg-slate-800"
-                      }`}
-                    >
-                      <span className="text-3xl mb-2">{item.icon}</span>
-                      <span className="text-xs font-semibold text-center leading-tight">{item.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* RIGHT PANEL: ACTIONS */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col">
-              
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-800">
-                <div className="text-5xl">
-                  {activeCategory === "Enchanted Books" ? "📖" : activeCategory === "XP & Levels" ? "✨" : selectedItem.icon}
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-slate-100">
-                    {activeCategory === "Enchanted Books" ? "Enchanted Book" : activeCategory === "XP & Levels" ? "Experience Points" : selectedItem.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-mono">
-                    {activeCategory === "Enchanted Books" ? "minecraft:enchanted_book" : activeCategory === "XP & Levels" ? "/xp add" : selectedItem.id}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-slate-400 mb-2">Jumlah {activeCategory === "XP & Levels" ? "XP" : "Item"}</label>
-                <div className="flex bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
-                  <button onClick={() => setAmount(Math.max(1, amount - 1))} className="px-4 py-2 hover:bg-slate-800 text-slate-400 font-bold border-r border-slate-800">-</button>
-                  <input 
-                    type="number" 
-                    value={amount} 
-                    onChange={(e) => setAmount(Number(e.target.value))}
-                    className="flex-1 bg-transparent text-center font-bold text-slate-100 outline-none"
-                    min="1" max="6400"
-                  />
-                  <button onClick={() => setAmount(amount + 1)} className="px-4 py-2 hover:bg-slate-800 text-slate-400 font-bold border-l border-slate-800">+</button>
-                  <button onClick={() => setAmount(64)} className="px-4 py-2 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white text-xs font-bold transition-colors">64x</button>
-                </div>
-              </div>
-
-              {activeCategory === "XP & Levels" && (
-                <div className="mb-6 flex-1 flex flex-col">
-                  <label className="block text-sm font-bold text-slate-400 mb-2">Tipe XP</label>
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setXpType("levels")}
-                      className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors ${xpType === "levels" ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400 border border-slate-700"}`}
-                    >
-                      Levels (Tingkat)
-                    </button>
-                    <button 
-                      onClick={() => setXpType("points")}
-                      className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors ${xpType === "points" ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400 border border-slate-700"}`}
-                    >
-                      Points (Titik)
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {(activeCategory === "Weapons" || activeCategory === "Tools" || activeCategory === "Armor" || activeCategory === "Enchanted Books") && (
-                <div className="mb-6 flex-1 flex flex-col">
-                  <label className="block text-sm font-bold text-slate-400 mb-2 flex justify-between">
-                    Enchantments <span className="text-xs font-normal text-slate-500 italic">Bisa tembus level</span>
-                  </label>
-                  
-                  <div className="flex gap-2 mb-3">
-                    <select 
-                      value={newEnchantId} 
-                      onChange={(e) => setNewEnchantId(e.target.value)}
-                      className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-slate-300 outline-none focus:border-indigo-500"
-                    >
-                      {ENCHANTMENTS.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-                    </select>
-                    <input 
-                      type="number" 
-                      value={newEnchantLvl} 
-                      onChange={(e) => setNewEnchantLvl(Number(e.target.value))}
-                      className="w-16 bg-slate-950 border border-slate-800 rounded-lg p-2 text-sm text-center text-slate-300 outline-none focus:border-indigo-500 font-mono"
-                    />
-                    <button onClick={addEnchant} className="px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-bold border border-slate-700">+</button>
-                  </div>
-
-                  <div className="flex-1 bg-slate-950/50 rounded-lg border border-slate-800 p-2 overflow-y-auto max-h-48 custom-scrollbar">
-                    {customEnchants.length === 0 ? (
-                      <div className="h-full flex items-center justify-center text-xs text-slate-600 italic">Belum ada.</div>
-                    ) : (
-                      customEnchants.map(ench => {
-                        const name = ENCHANTMENTS.find(e => e.id === ench.id)?.name || ench.id;
-                        return (
-                          <div key={ench.id} className="flex items-center justify-between bg-slate-900 border border-slate-800 px-3 py-2 rounded-md mb-2">
-                            <span className="text-xs font-semibold text-slate-300">{name} <span className="text-indigo-400 bg-indigo-900/30 px-1 rounded ml-1">Lvl {ench.lvl}</span></span>
-                            <button onClick={() => removeEnchant(ench.id)} className="text-slate-500 hover:text-rose-400 font-bold">×</button>
-                          </div>
-                        )
-                      })
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <button
-                onClick={handleGive}
-                disabled={loading}
-                className="mt-auto w-full py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all disabled:opacity-50"
-              >
-                {loading ? "Mengirim..." : `Kirim ke ${selectedPlayer}`}
+          {/* Target Player */}
+          <div>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="block text-sm font-bold text-slate-700">Target Player</label>
+              <button onClick={fetchPlayers} className={`text-xs text-indigo-600 font-semibold hover:underline ${refreshing ? 'opacity-50' : ''}`}>
+                {refreshing ? 'Refreshing...' : 'Refresh List'}
               </button>
             </div>
+            <select 
+              value={selectedPlayer}
+              onChange={(e) => setSelectedPlayer(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+            >
+              <option value="@a">Semua Pemain (@a)</option>
+              {players.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
           </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-1.5">Kategori</label>
+            <select 
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+            >
+              {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+            </select>
+          </div>
+
+          {/* Items / XP */}
+          {activeCategory !== "Enchanted Books" && activeCategory !== "XP & Levels" && (
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-1.5">Pilih Item</label>
+              <select 
+                value={selectedItem.id}
+                onChange={(e) => {
+                  const item = availableItems.find(i => i.id === e.target.value);
+                  if (item) setSelectedItem(item);
+                }}
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+              >
+                {availableItems.map(item => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Amount & XP Type */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-bold text-slate-700 mb-1.5">
+                Jumlah {activeCategory === "XP & Levels" ? "XP" : "Item"}
+              </label>
+              <input 
+                type="number" 
+                value={amount} 
+                onChange={(e) => setAmount(Number(e.target.value))}
+                min="1" max="6400"
+                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+              />
+            </div>
+            {activeCategory === "XP & Levels" && (
+              <div className="flex-1">
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">Tipe XP</label>
+                <select 
+                  value={xpType}
+                  onChange={(e) => setXpType(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                >
+                  <option value="levels">Levels (Tingkat)</option>
+                  <option value="points">Points (Titik)</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          {/* Enchantments */}
+          {(activeCategory === "Weapons" || activeCategory === "Tools" || activeCategory === "Armor" || activeCategory === "Enchanted Books") && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">
+              <label className="block text-sm font-bold text-slate-700 mb-2">Custom Enchantments</label>
+              
+              <div className="flex gap-2 mb-3">
+                <select 
+                  value={newEnchantId} 
+                  onChange={(e) => setNewEnchantId(e.target.value)}
+                  className="flex-1 bg-white border border-slate-300 text-slate-900 text-xs rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none"
+                >
+                  {ENCHANTMENTS.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                </select>
+                <input 
+                  type="number" 
+                  value={newEnchantLvl} 
+                  onChange={(e) => setNewEnchantLvl(Number(e.target.value))}
+                  className="w-16 bg-white border border-slate-300 text-slate-900 text-xs text-center rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none"
+                />
+                <button onClick={addEnchant} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-md font-bold text-lg transition-colors">+</button>
+              </div>
+
+              {customEnchants.length > 0 && (
+                <div className="flex flex-col gap-1.5">
+                  {customEnchants.map(ench => {
+                    const name = ENCHANTMENTS.find(e => e.id === ench.id)?.name || ench.id;
+                    return (
+                      <div key={ench.id} className="flex items-center justify-between bg-white border border-slate-200 px-3 py-1.5 rounded-md text-sm">
+                        <span className="font-medium text-slate-700">{name} <span className="text-indigo-600 bg-indigo-50 px-1 rounded text-xs ml-1">Lvl {ench.lvl}</span></span>
+                        <button onClick={() => removeEnchant(ench.id)} className="text-slate-400 hover:text-rose-500 font-bold text-lg leading-none">&times;</button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            onClick={handleGive}
+            disabled={loading}
+            className="mt-4 w-full py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all disabled:opacity-50"
+          >
+            {loading ? "Mengirim..." : "Kirim Command"}
+          </button>
         </div>
       </div>
 
       {notification && (
-        <div className={`fixed bottom-6 right-6 p-4 rounded-xl shadow-2xl border flex items-center gap-3 animate-[slideUp_0.3s_ease-out] z-50 ${
-          notification.isError ? "bg-rose-950 border-rose-800 text-rose-200" : "bg-emerald-950 border-emerald-800 text-emerald-200"
+        <div className={`fixed bottom-6 right-6 p-4 rounded-xl shadow-xl flex items-center gap-3 animate-[slideUp_0.3s_ease-out] z-50 ${
+          notification.isError ? "bg-rose-100 text-rose-800 border border-rose-200" : "bg-emerald-100 text-emerald-800 border border-emerald-200"
         }`}>
-          <div className="text-xl">{notification.isError ? "❌" : "✅"}</div>
-          <div className="font-semibold text-sm pr-2">{notification.msg}</div>
+          <div className="font-semibold text-sm pr-2">{notification.isError ? "❌" : "✅"} {notification.msg}</div>
         </div>
       )}
 
       <style jsx global>{`
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
         @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
       `}</style>
     </div>
