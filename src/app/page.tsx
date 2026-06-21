@@ -22,9 +22,7 @@ export default function SpawnerDashboard() {
   
   const [tpType, setTpType] = useState("player");
   const [tpTargetPlayer, setTpTargetPlayer] = useState("");
-  const [tpX, setTpX] = useState("0");
-  const [tpY, setTpY] = useState("100");
-  const [tpZ, setTpZ] = useState("0");
+  const [tpCoords, setTpCoords] = useState("0 100 0");
 
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{msg: string, isError: boolean} | null>(null);
@@ -81,7 +79,7 @@ export default function SpawnerDashboard() {
         }
         rawCommand = `tp ${selectedPlayer} ${tpTargetPlayer}`;
       } else {
-        rawCommand = `tp ${selectedPlayer} ${tpX} ${tpY} ${tpZ}`;
+        rawCommand = `tp ${selectedPlayer} ${tpCoords}`;
       }
     } else if (activeCategory === "XP & Levels") {
       rawCommand = `xp add ${selectedPlayer} ${amount} ${xpType}`;
@@ -259,19 +257,15 @@ export default function SpawnerDashboard() {
                   </select>
                 </div>
               ) : (
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-slate-400 mb-1">X</label>
-                    <input type="number" value={tpX} onChange={(e) => setTpX(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-slate-400 mb-1">Y (Tinggi)</label>
-                    <input type="number" value={tpY} onChange={(e) => setTpY(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-xs font-bold text-slate-400 mb-1">Z</label>
-                    <input type="number" value={tpZ} onChange={(e) => setTpZ(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
-                  </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-1.5">Koordinat (X Y Z)</label>
+                  <input 
+                    type="text" 
+                    value={tpCoords} 
+                    onChange={(e) => setTpCoords(e.target.value)} 
+                    placeholder="Contoh: 100 64 -200"
+                    className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500 font-mono" 
+                  />
                 </div>
               )}
             </div>
