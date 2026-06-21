@@ -16,6 +16,7 @@ export default function SpawnerDashboard() {
   const [customEnchants, setCustomEnchants] = useState<{id: string, lvl: number}[]>([]);
   const [newEnchantId, setNewEnchantId] = useState("minecraft:sharpness");
   const [newEnchantLvl, setNewEnchantLvl] = useState(5);
+  const [xpType, setXpType] = useState("levels");
 
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{msg: string, isError: boolean} | null>(null);
@@ -54,7 +55,9 @@ export default function SpawnerDashboard() {
 
     let rawCommand = "";
 
-    if (activeCategory === "Enchanted Books") {
+    if (activeCategory === "XP & Levels") {
+      rawCommand = `xp add ${selectedPlayer} ${amount} ${xpType}`;
+    } else if (activeCategory === "Enchanted Books") {
       if (customEnchants.length === 0) {
         showNotif("Buku sihir harus ada isinya! Tambahkan minimal 1 enchantment.", true);
         setLoading(false);
@@ -182,7 +185,7 @@ export default function SpawnerDashboard() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 px-4 text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all mb-4"
-                disabled={activeCategory === "Enchanted Books"}
+                disabled={activeCategory === "Enchanted Books" || activeCategory === "XP & Levels"}
               />
 
               {activeCategory === "Enchanted Books" ? (
@@ -190,6 +193,12 @@ export default function SpawnerDashboard() {
                   <div className="text-6xl mb-4 grayscale opacity-40">📖</div>
                   <h3 className="text-lg font-bold text-slate-300 mb-1">Custom Enchanted Book</h3>
                   <p className="text-sm text-slate-500">Rakit buku sihir Anda di panel sebelah kanan.</p>
+                </div>
+              ) : activeCategory === "XP & Levels" ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-8 text-slate-500 bg-slate-950/50 rounded-xl border border-dashed border-slate-800">
+                  <div className="text-6xl mb-4 grayscale opacity-40">✨</div>
+                  <h3 className="text-lg font-bold text-slate-300 mb-1">Pemberian XP</h3>
+                  <p className="text-sm text-slate-500">Tentukan jumlah level atau poin di panel sebelah kanan.</p>
                 </div>
               ) : (
                 <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pr-2 custom-scrollbar">
@@ -219,20 +228,20 @@ export default function SpawnerDashboard() {
               
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-800">
                 <div className="text-5xl">
-                  {activeCategory === "Enchanted Books" ? "📖" : selectedItem.icon}
+                  {activeCategory === "Enchanted Books" ? "📖" : activeCategory === "XP & Levels" ? "✨" : selectedItem.icon}
                 </div>
                 <div>
                   <h3 className="font-bold text-lg text-slate-100">
-                    {activeCategory === "Enchanted Books" ? "Enchanted Book" : selectedItem.name}
+                    {activeCategory === "Enchanted Books" ? "Enchanted Book" : activeCategory === "XP & Levels" ? "Experience Points" : selectedItem.name}
                   </h3>
                   <p className="text-xs text-slate-500 font-mono">
-                    {activeCategory === "Enchanted Books" ? "minecraft:enchanted_book" : selectedItem.id}
+                    {activeCategory === "Enchanted Books" ? "minecraft:enchanted_book" : activeCategory === "XP & Levels" ? "/xp add" : selectedItem.id}
                   </p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-bold text-slate-400 mb-2">Jumlah</label>
+                <label className="block text-sm font-bold text-slate-400 mb-2">Jumlah {activeCategory === "XP & Levels" ? "XP" : "Item"}</label>
                 <div className="flex bg-slate-950 border border-slate-800 rounded-lg overflow-hidden">
                   <button onClick={() => setAmount(Math.max(1, amount - 1))} className="px-4 py-2 hover:bg-slate-800 text-slate-400 font-bold border-r border-slate-800">-</button>
                   <input 
@@ -246,6 +255,26 @@ export default function SpawnerDashboard() {
                   <button onClick={() => setAmount(64)} className="px-4 py-2 bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white text-xs font-bold transition-colors">64x</button>
                 </div>
               </div>
+
+              {activeCategory === "XP & Levels" && (
+                <div className="mb-6 flex-1 flex flex-col">
+                  <label className="block text-sm font-bold text-slate-400 mb-2">Tipe XP</label>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setXpType("levels")}
+                      className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors ${xpType === "levels" ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400 border border-slate-700"}`}
+                    >
+                      Levels (Tingkat)
+                    </button>
+                    <button 
+                      onClick={() => setXpType("points")}
+                      className={`flex-1 py-2 rounded-lg font-bold text-sm transition-colors ${xpType === "points" ? "bg-indigo-600 text-white" : "bg-slate-800 text-slate-400 border border-slate-700"}`}
+                    >
+                      Points (Titik)
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {(activeCategory === "Weapons" || activeCategory === "Tools" || activeCategory === "Armor" || activeCategory === "Enchanted Books") && (
                 <div className="mb-6 flex-1 flex flex-col">

@@ -1,4 +1,4 @@
-export const CATEGORIES = ["Weapons", "Tools", "Armor", "Materials", "Food", "Blocks", "Magic", "Enchanted Books"];
+export const CATEGORIES = ["Weapons", "Tools", "Armor", "Materials", "Food", "Blocks", "Magic", "Enchanted Books", "XP & Levels"];
 
 export const ITEM_DB = [
   // --- WEAPONS ---
