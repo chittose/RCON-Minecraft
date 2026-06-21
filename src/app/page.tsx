@@ -19,6 +19,12 @@ export default function SpawnerDashboard() {
   const [newEnchantId, setNewEnchantId] = useState("minecraft:sharpness");
   const [newEnchantLvl, setNewEnchantLvl] = useState(5);
   const [xpType, setXpType] = useState("levels");
+  
+  const [tpType, setTpType] = useState("player");
+  const [tpTargetPlayer, setTpTargetPlayer] = useState("");
+  const [tpX, setTpX] = useState("0");
+  const [tpY, setTpY] = useState("100");
+  const [tpZ, setTpZ] = useState("0");
 
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState<{msg: string, isError: boolean} | null>(null);
@@ -66,7 +72,18 @@ export default function SpawnerDashboard() {
 
     let rawCommand = "";
 
-    if (activeCategory === "XP & Levels") {
+    if (activeCategory === "Teleport") {
+      if (tpType === "player") {
+        if (!tpTargetPlayer) {
+          showNotif("Pilih pemain tujuan terlebih dahulu!", true);
+          setLoading(false);
+          return;
+        }
+        rawCommand = `tp ${selectedPlayer} ${tpTargetPlayer}`;
+      } else {
+        rawCommand = `tp ${selectedPlayer} ${tpX} ${tpY} ${tpZ}`;
+      }
+    } else if (activeCategory === "XP & Levels") {
       rawCommand = `xp add ${selectedPlayer} ${amount} ${xpType}`;
     } else if (activeCategory === "Enchanted Books") {
       if (customEnchants.length === 0) {
@@ -165,7 +182,7 @@ export default function SpawnerDashboard() {
           </div>
 
           {/* Items / XP */}
-          {activeCategory !== "Enchanted Books" && activeCategory !== "XP & Levels" && (
+          {activeCategory !== "Enchanted Books" && activeCategory !== "XP & Levels" && activeCategory !== "Teleport" && (
             <div>
               <label className="block text-sm font-bold text-slate-300 mb-1.5">Pilih Item</label>
               <select 
@@ -184,8 +201,9 @@ export default function SpawnerDashboard() {
           )}
 
           {/* Amount & XP Type */}
-          <div className="flex gap-4">
-            <div className="flex-1">
+          {activeCategory !== "Teleport" && (
+            <div className="flex gap-4">
+              <div className="flex-1">
               <label className="block text-sm font-bold text-slate-300 mb-1.5">
                 Jumlah {activeCategory === "XP & Levels" ? "XP" : "Item"}
               </label>
@@ -211,6 +229,53 @@ export default function SpawnerDashboard() {
               </div>
             )}
           </div>
+          )}
+
+          {/* Teleport Options */}
+          {activeCategory === "Teleport" && (
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-bold text-slate-300 mb-1.5">Tujuan Teleportasi</label>
+                <select 
+                  value={tpType}
+                  onChange={(e) => setTpType(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                >
+                  <option value="player">Ke Pemain Lain</option>
+                  <option value="coords">Ke Koordinat (X Y Z)</option>
+                </select>
+              </div>
+
+              {tpType === "player" ? (
+                <div>
+                  <label className="block text-sm font-bold text-slate-300 mb-1.5">Pemain Tujuan</label>
+                  <select 
+                    value={tpTargetPlayer}
+                    onChange={(e) => setTpTargetPlayer(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                  >
+                    <option value="">-- Pilih Pemain --</option>
+                    {players.filter(p => p !== selectedPlayer).map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">X</label>
+                    <input type="number" value={tpX} onChange={(e) => setTpX(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Y (Tinggi)</label>
+                    <input type="number" value={tpY} onChange={(e) => setTpY(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs font-bold text-slate-400 mb-1">Z</label>
+                    <input type="number" value={tpZ} onChange={(e) => setTpZ(e.target.value)} className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg p-2.5 outline-none focus:border-indigo-500" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Enchantments */}
           {(activeCategory === "Weapons" || activeCategory === "Tools" || activeCategory === "Armor" || activeCategory === "Enchanted Books") && (
