@@ -121,14 +121,14 @@ export default function SpawnerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans p-4 sm:p-8 flex items-center justify-center selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 sm:p-8 flex items-center justify-center selection:bg-indigo-500/30">
       
-      <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <div className="bg-indigo-600 p-6 text-white text-center">
-          <h1 className="text-2xl font-bold tracking-tight">RCON Spawner</h1>
-          <p className="text-indigo-200 text-sm mt-1">Kirim item instan ke server Anda.</p>
+        <div className="bg-indigo-600/20 border-b border-indigo-500/20 p-6 text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-indigo-400">RCON Spawner</h1>
+          <p className="text-slate-400 text-sm mt-1">Kirim item instan ke server Anda.</p>
         </div>
 
         {/* Form Body */}
@@ -137,15 +137,15 @@ export default function SpawnerDashboard() {
           {/* Target Player */}
           <div>
             <div className="flex justify-between items-center mb-1.5">
-              <label className="block text-sm font-bold text-slate-700">Target Player</label>
-              <button onClick={fetchPlayers} className={`text-xs text-indigo-600 font-semibold hover:underline ${refreshing ? 'opacity-50' : ''}`}>
+              <label className="block text-sm font-bold text-slate-300">Target Player</label>
+              <button onClick={fetchPlayers} className={`text-xs text-indigo-400 font-semibold hover:underline ${refreshing ? 'opacity-50' : ''}`}>
                 {refreshing ? 'Refreshing...' : 'Refresh List'}
               </button>
             </div>
             <select 
               value={selectedPlayer}
               onChange={(e) => setSelectedPlayer(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+              className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
             >
               <option value="@a">Semua Pemain (@a)</option>
               {players.map(p => <option key={p} value={p}>{p}</option>)}
@@ -154,11 +154,11 @@ export default function SpawnerDashboard() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-1.5">Kategori</label>
+            <label className="block text-sm font-bold text-slate-300 mb-1.5">Kategori</label>
             <select 
               value={activeCategory}
               onChange={(e) => setActiveCategory(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+              className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
             >
               {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
@@ -167,14 +167,14 @@ export default function SpawnerDashboard() {
           {/* Items / XP */}
           {activeCategory !== "Enchanted Books" && activeCategory !== "XP & Levels" && (
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">Pilih Item</label>
+              <label className="block text-sm font-bold text-slate-300 mb-1.5">Pilih Item</label>
               <select 
                 value={selectedItem.id}
                 onChange={(e) => {
                   const item = availableItems.find(i => i.id === e.target.value);
                   if (item) setSelectedItem(item);
                 }}
-                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
               >
                 {availableItems.map(item => (
                   <option key={item.id} value={item.id}>{item.name}</option>
@@ -186,7 +186,7 @@ export default function SpawnerDashboard() {
           {/* Amount & XP Type */}
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-bold text-slate-700 mb-1.5">
+              <label className="block text-sm font-bold text-slate-300 mb-1.5">
                 Jumlah {activeCategory === "XP & Levels" ? "XP" : "Item"}
               </label>
               <input 
@@ -194,16 +194,16 @@ export default function SpawnerDashboard() {
                 value={amount} 
                 onChange={(e) => setAmount(Number(e.target.value))}
                 min="1" max="6400"
-                className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
               />
             </div>
             {activeCategory === "XP & Levels" && (
               <div className="flex-1">
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Tipe XP</label>
+                <label className="block text-sm font-bold text-slate-300 mb-1.5">Tipe XP</label>
                 <select 
                   value={xpType}
                   onChange={(e) => setXpType(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
+                  className="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none transition-colors"
                 >
                   <option value="levels">Levels (Tingkat)</option>
                   <option value="points">Points (Titik)</option>
@@ -214,14 +214,14 @@ export default function SpawnerDashboard() {
 
           {/* Enchantments */}
           {(activeCategory === "Weapons" || activeCategory === "Tools" || activeCategory === "Armor" || activeCategory === "Enchanted Books") && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">
-              <label className="block text-sm font-bold text-slate-700 mb-2">Custom Enchantments</label>
+            <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-4 mt-2">
+              <label className="block text-sm font-bold text-slate-400 mb-2">Custom Enchantments</label>
               
               <div className="flex gap-2 mb-3">
                 <select 
                   value={newEnchantId} 
                   onChange={(e) => setNewEnchantId(e.target.value)}
-                  className="flex-1 bg-white border border-slate-300 text-slate-900 text-xs rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none"
+                  className="flex-1 bg-slate-900 border border-slate-700 text-slate-300 text-xs rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none"
                 >
                   {ENCHANTMENTS.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                 </select>
@@ -229,9 +229,9 @@ export default function SpawnerDashboard() {
                   type="number" 
                   value={newEnchantLvl} 
                   onChange={(e) => setNewEnchantLvl(Number(e.target.value))}
-                  className="w-16 bg-white border border-slate-300 text-slate-900 text-xs text-center rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none"
+                  className="w-16 bg-slate-900 border border-slate-700 text-slate-300 text-xs text-center rounded-md focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none font-mono"
                 />
-                <button onClick={addEnchant} className="px-3 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-md font-bold text-lg transition-colors">+</button>
+                <button onClick={addEnchant} className="px-3 bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-400 rounded-md font-bold text-lg transition-colors border border-indigo-500/30">+</button>
               </div>
 
               {customEnchants.length > 0 && (
@@ -239,9 +239,9 @@ export default function SpawnerDashboard() {
                   {customEnchants.map(ench => {
                     const name = ENCHANTMENTS.find(e => e.id === ench.id)?.name || ench.id;
                     return (
-                      <div key={ench.id} className="flex items-center justify-between bg-white border border-slate-200 px-3 py-1.5 rounded-md text-sm">
-                        <span className="font-medium text-slate-700">{name} <span className="text-indigo-600 bg-indigo-50 px-1 rounded text-xs ml-1">Lvl {ench.lvl}</span></span>
-                        <button onClick={() => removeEnchant(ench.id)} className="text-slate-400 hover:text-rose-500 font-bold text-lg leading-none">&times;</button>
+                      <div key={ench.id} className="flex items-center justify-between bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-md text-sm">
+                        <span className="font-medium text-slate-400">{name} <span className="text-indigo-300 bg-indigo-900/40 px-1.5 py-0.5 rounded text-xs ml-1 border border-indigo-800/50">Lvl {ench.lvl}</span></span>
+                        <button onClick={() => removeEnchant(ench.id)} className="text-slate-500 hover:text-rose-400 font-bold text-lg leading-none transition-colors">&times;</button>
                       </div>
                     )
                   })}
@@ -254,7 +254,7 @@ export default function SpawnerDashboard() {
           <button
             onClick={handleGive}
             disabled={loading}
-            className="mt-4 w-full py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all disabled:opacity-50"
+            className="mt-4 w-full py-3 rounded-lg font-bold text-white bg-indigo-600 hover:bg-indigo-500 focus:ring-4 focus:ring-indigo-500/30 transition-all disabled:opacity-50 shadow-[0_0_15px_rgba(79,70,229,0.3)]"
           >
             {loading ? "Mengirim..." : "Kirim Command"}
           </button>
@@ -262,8 +262,8 @@ export default function SpawnerDashboard() {
       </div>
 
       {notification && (
-        <div className={`fixed bottom-6 right-6 p-4 rounded-xl shadow-xl flex items-center gap-3 animate-[slideUp_0.3s_ease-out] z-50 ${
-          notification.isError ? "bg-rose-100 text-rose-800 border border-rose-200" : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+        <div className={`fixed bottom-6 right-6 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-[slideUp_0.3s_ease-out] z-50 border ${
+          notification.isError ? "bg-rose-950 text-rose-200 border-rose-800" : "bg-emerald-950 text-emerald-200 border-emerald-800"
         }`}>
           <div className="font-semibold text-sm pr-2">{notification.isError ? "❌" : "✅"} {notification.msg}</div>
         </div>
