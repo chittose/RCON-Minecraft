@@ -15,6 +15,8 @@ export const ITEM_DB = [
   { id: "minecraft:shield", name: "Shield", cat: "Weapons", icon: "🛡️" },
 
   // --- TOOLS ---
+  { id: "minecraft:elytra", name: "Elytra", cat: "Tools", icon: "🦋" },
+  { id: "minecraft:firework_rocket", name: "Firework Rocket", cat: "Tools", icon: "🚀" },
   // Pickaxes
   { id: "minecraft:wooden_pickaxe", name: "Wooden Pickaxe", cat: "Tools", icon: "⛏️" },
   { id: "minecraft:stone_pickaxe", name: "Stone Pickaxe", cat: "Tools", icon: "⛏️" },
@@ -138,8 +140,6 @@ export const ITEM_DB = [
 
   // --- MAGIC & RARE ---
   { id: "minecraft:totem_of_undying", name: "Totem of Undying", cat: "Magic", icon: "🗿" },
-  { id: "minecraft:elytra", name: "Elytra", cat: "Magic", icon: "🦋" },
-  { id: "minecraft:firework_rocket", name: "Firework Rocket", cat: "Magic", icon: "🚀" },
   { id: "minecraft:experience_bottle", name: "Bottle o' Enchanting", cat: "Magic", icon: "🧪" },
   { id: "minecraft:beacon", name: "Beacon", cat: "Magic", icon: "🏮" },
   { id: "minecraft:conduit", name: "Conduit", cat: "Magic", icon: "🧿" },
