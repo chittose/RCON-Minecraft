@@ -90,12 +90,12 @@ export default function SpawnerDashboard() {
         return;
       }
       const enchTags = customEnchants.map(e => `"${e.id}":${e.lvl}`).join(",");
-      rawCommand = `give ${selectedPlayer} minecraft:enchanted_book[stored_enchantments={levels:{${enchTags}}}] ${amount}`;
+      rawCommand = `give ${selectedPlayer} minecraft:enchanted_book[stored_enchantments={${enchTags}}] ${amount}`;
     } else {
       let itemTag = selectedItem.id;
       if (customEnchants.length > 0) {
         const enchTags = customEnchants.map(e => `"${e.id}":${e.lvl}`).join(",");
-        itemTag = `${itemTag}[enchantments={levels:{${enchTags}}}]`;
+        itemTag = `${itemTag}[enchantments={${enchTags}}]`;
       }
       rawCommand = `give ${selectedPlayer} ${itemTag} ${amount}`;
     }
