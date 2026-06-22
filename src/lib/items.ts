@@ -16,7 +16,6 @@ export const ITEM_DB = [
 
   // --- TOOLS ---
   { id: "minecraft:elytra", name: "Elytra", cat: "Tools", icon: "🦋" },
-  { id: "minecraft:firework_rocket", name: "Firework Rocket", cat: "Tools", icon: "🚀" },
   // Pickaxes
   { id: "minecraft:wooden_pickaxe", name: "Wooden Pickaxe", cat: "Tools", icon: "⛏️" },
   { id: "minecraft:stone_pickaxe", name: "Stone Pickaxe", cat: "Tools", icon: "⛏️" },
@@ -85,6 +84,7 @@ export const ITEM_DB = [
   { id: "minecraft:turtle_helmet", name: "Turtle Helmet", cat: "Armor", icon: "🐢" },
 
   // --- MATERIALS ---
+  { id: "minecraft:firework_rocket", name: "Firework Rocket", cat: "Materials", icon: "🚀" },
   { id: "minecraft:coal", name: "Coal", cat: "Materials", icon: "⚫" },
   { id: "minecraft:raw_iron", name: "Raw Iron", cat: "Materials", icon: "🪨" },
   { id: "minecraft:iron_ingot", name: "Iron Ingot", cat: "Materials", icon: "⚪" },
