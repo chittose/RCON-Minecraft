@@ -139,6 +139,7 @@ export const ITEM_DB = [
   // --- MAGIC & RARE ---
   { id: "minecraft:totem_of_undying", name: "Totem of Undying", cat: "Magic", icon: "🗿" },
   { id: "minecraft:elytra", name: "Elytra", cat: "Magic", icon: "🦋" },
+  { id: "minecraft:firework_rocket", name: "Firework Rocket", cat: "Magic", icon: "🚀" },
   { id: "minecraft:experience_bottle", name: "Bottle o' Enchanting", cat: "Magic", icon: "🧪" },
   { id: "minecraft:beacon", name: "Beacon", cat: "Magic", icon: "🏮" },
   { id: "minecraft:conduit", name: "Conduit", cat: "Magic", icon: "🧿" },
